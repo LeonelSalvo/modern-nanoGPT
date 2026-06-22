@@ -2,7 +2,7 @@
 
 # modern-nanoGPT
 
-**A GPT built from scratch in PyTorch — the *Zero to Hero* architecture, upgraded with the components every 2026 open-weight LLM actually uses.**
+**A from-scratch PyTorch GPT that takes the nanoGPT / GPT-2 skeleton and adds the components common to current open-weight LLMs: RMSNorm, RoPE, SwiGLU, GQA, and no-bias + tied embeddings.**
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.1+-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
@@ -12,13 +12,13 @@
 
 ---
 
-## Why I built this
+## Overview
 
-I went through Karpathy's *Neural Networks: Zero to Hero* and rebuilt GPT-2 from the ground up. That left me one question: **what actually changed between GPT-2 (2019) and a modern open model like Llama, Mistral or Qwen?**
+The skeleton of a transformer LM hasn't changed much from GPT-2: token embeddings → stacked blocks → next-token prediction. What changed between GPT-2 (2019) and a current open model (Llama / Mistral / Qwen) is a handful of internal components. This repo isolates **five of them** and implements each from scratch, so the difference between "rebuild GPT-2" and "build a current dense transformer" is explicit and testable.
 
-The honest answer is *less than you'd think* — the skeleton is identical (token embeddings → stacked transformer blocks → next-token prediction). What changed is **five internal pieces**. So I built this repo to implement exactly those five, from scratch, each one isolated and explained, so I *own* the delta between "I can rebuild GPT-2" and "I can build a current transformer."
+No `nn.Transformer`, no HuggingFace — attention, RoPE, RMSNorm and SwiGLU are written out, each with comments that explain the rationale, so the code can be read as well as run.
 
-No `nn.Transformer`, no HuggingFace — the attention, RoPE, RMSNorm and SwiGLU are all written out. The comments carry the rationale on purpose, so the repo doubles as something I (or anyone) can learn from, not just run.
+A sparse follow-up (MoE + MLA, with measurement tooling) lives in **[nano-moe-mla](https://github.com/LeonelSalvo/nano-moe-mla)**.
 
 ## GPT-2 → modern: the 5 swaps
 
@@ -55,7 +55,7 @@ modern-nanoGPT/
 
 ## Build it from scratch, step by step
 
-The [`steps/`](steps/) folder is how I built it: **one component at a time**, each as a small script with a self-checking test. Every step follows the same shape — *zoom out* (where this piece sits in the whole architecture) → *zoom in* (what it is, in plain language) → *implementation* → *test*. Run each one, watch it print `OK`, move on:
+The [`steps/`](steps/) folder builds the model **one component at a time**, each as a small script with a self-checking test. Every step follows the same shape — *zoom out* (where the piece sits in the architecture) → *zoom in* (what it is, in plain language) → *implementation* → *test*. Run each one, watch it print `OK`, move on:
 
 ```bash
 python steps/00_setup.py     # torch installed? which device?
